@@ -87,7 +87,7 @@ Stores transaction details:
 
 ## 🖼️ ER Diagram
 
-![ER Diagram](er-diagram.png)
+![ER Diagram](thrift-store-er-diagram.png)
 
 ---
 
