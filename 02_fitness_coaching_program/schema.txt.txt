@@ -1,0 +1,97 @@
+User[icon:user, color: Yellow]{
+  user_id serial pk
+  username varchar(22) unique not null
+  user_password varchar(255)
+  user_name text
+  user_address text
+  user_phone_no varchar(15)
+  role enum(client,trainer)
+  created_at datetime
+  modified_at datetime
+}
+Client[icon:user-plus, color: Blue]{
+  client_id serial pk
+  user_id int fk
+
+  created_at datetime
+  modified_at datetime
+}
+Trainers[icon:user-cog, color: Orange]{
+  trainer_id serial pk
+  user_id int fk
+  trainer_ratings decimal(2,1)
+  created_at datetime
+  modified_at datetime
+}
+Plans[icon:document, color: Green]{
+  plan_id serial pk
+  trainer_id int fk
+  plan_cost decimal(7,2)
+  plan_duration_days time
+  plan_type enum(consultation,coaching,live,training_diet)
+  
+}
+Sessions[icon:timer, color: Purple]{
+  session_id serial pk
+  client_id int fk
+  trainer_id int fk
+  scheduled_at datetime
+  session_duration time
+  created_at datetime
+  modified_at datetime
+}
+Subscription[icon:youtube, color: Red]{
+  subscription_id serial pk
+  client_id int fk
+  plan_id int fk
+  start_date date
+  end_date date
+  status enum(active,expired,cancelled)
+}
+Payment[icon:rupee]{
+  payment_id serial pk
+  subscription_id int fk
+  total_cost decimal(8,2)
+  payment_status enum(pending,paid,failed)
+  payment_date date
+
+}
+
+check_ins[icon:check, color: Yellow]{
+  checkin_id serial pk
+  client_id int fk
+  weight decimal(4,2)
+  notes text
+  created_at date
+  modified_at date
+}
+//1 User can only be 1 client (role based)
+User.user_id - Client.user_id 
+
+//1 User can only be 1 trainer
+User.user_id - Trainers.user_id 
+
+//1 Trainer can have multiple plans
+Trainers.trainer_id < Plans.trainer_id
+
+//1 client can subscribe to multiple plans over time
+Client.client_id < Subscription.client_id
+
+//1 plan can be subscribed by multiple clients
+Plans.plan_id < Subscription.plan_id
+
+//1 subscription can have multiple payments
+Subscription.subscription_id < Payment.subscription_id
+
+//1 client can attend multiple sessions
+Client.client_id < Sessions.client_id
+
+//1 trainer can conduct multiple sessions
+Trainers.trainer_id < Sessions.trainer_id
+
+//1 client can submit multiple check-ins
+Client.client_id < check_ins.client_id
+
+//1 trainer can handle multiple clients (indirect via plans/subscriptions)
+Trainers.trainer_id < Plans.trainer_id
+

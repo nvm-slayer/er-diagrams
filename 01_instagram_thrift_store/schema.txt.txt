@@ -1,0 +1,66 @@
+customers[icon:user]{
+  customer_id int pk
+  username unique not null
+  phone_no varchar(15)
+  email varchar(254) unique
+  address varchar(255)
+  created_at date
+  modified_at date
+}
+orders[icon:shopping-cart, color: Yellow]{
+  order_id int pk
+  customer_id int fk
+  total_cost decimal(12,4)
+  payment_status enum("pending","paid","failed")
+  shipping_status enum("processing","shipped","delivered")
+  created_at date
+  modified_at date
+}
+orders_item[icon:]{
+  item_id int pk
+  variant_id int fk
+  order_id int fk
+  item_cost int
+  quantity int
+}
+products[icon:shopping-bag, color: Orange, styleMode: shadow]{
+  product_id int pk
+  name varchar(200)
+  description text
+  type enum('thrifted','handmade')
+  created_at date
+  modified_at date
+}
+product_variant [color: Purple] {
+  variant_id int pk
+  product_id int fk
+  price decimal(12,4)
+  size enum("xs","s","m","l","xl","xxl")
+  color varchar(10)
+  stock int
+  condition varchar(20)
+}
+shipping[icon:truck, color: Green]{
+  shipping_id int pk
+  order_id int fk
+  current_status enum("In Transit","Delivered")
+  shipping_date date
+}
+payment[icon:rupee, color: Red]{
+  payment_id int pk
+  order_id int fk
+  amount int 
+  payment_type enum("prepaid","cod")
+  payment_method enum("cash","upi","card")
+  payment_status enum("received","failed","awaiting")
+  payment_date date
+
+}
+customers.customer_id < orders.customer_id
+orders.order_id < orders_item.order_id
+orders.order_id < shipping.order_id
+orders.order_id < payment.order_id
+products.product_id < product_variant.product_id
+product_variant.variant_id < orders_item.variant_id
+
+
