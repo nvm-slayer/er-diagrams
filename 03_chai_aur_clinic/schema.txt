@@ -1,0 +1,99 @@
+title Chai aur Clinic
+Patients[icon:user, colorMode: bold, color: Green, styleMode: watercolor]{
+  id serial pk
+  name text
+  age int
+  phone_no varchar(15)
+  created_at date
+  modified_at date
+}
+Doctors[icon:doctor, color: Orange]{
+  id serial pk
+  name text
+  phone_no varchar(15)
+  department_id int fk
+  speciality text
+  experience_years int
+
+  created_at date
+  modified_at date
+}
+Departments[icon:building]{
+  id serial pk
+  name text
+  head_of_department text
+  no_of_doctors int
+
+  created_at date
+  modified_at date
+}
+Appointments[icon:timer, color: Yellow]{
+  id serial pk
+  patient_id int fk
+  doctor_id int fk
+  duration time
+  scheduled_at datetime
+  appointment_status enum(scheduled,confirmed,successful,cancelled,no_show)
+
+  created_at date
+  modified_at date
+}
+Consultations[icon:stethoscope, color: Green]{
+  id serial pk
+  appointment_id int fk
+  diagnosis text
+  symptoms text
+  prescription text
+  notes text
+
+  created_at date
+  modified_at date
+
+}
+Prescribed_tests[icon:tesseract, color: Blue]{
+  id serial pk
+  consultation_id int fk
+  test_name text
+  instructions text
+  status enum(prescribed,completed,pending)
+
+  created_at date 
+  modified_at date
+}
+Reports[icon:report, color: Red]{
+  id serial pk
+  prescribed_test_id int fk
+  result text
+  report_file_url text
+  remarks text
+  generated_at date
+
+  created_at date
+  modified_at date
+}
+Payment[icon:rupee, color: Purple]{
+  id serial pk
+  appointment_id int fk
+  total_cost decimal(10,2)
+  status enum(pending,paid,failed)
+  date date
+   
+  created_at date
+  modified_at date
+}
+
+//In my clinic one doctor has only one department, but one department can have many doctors
+Doctors.department_id > Departments.id
+//1 doctor can have many appointments
+Doctors.id<Appointments.doctor_id
+//1 patient can have book many appointments
+Patients.id <Appointments.patient_id
+//1 appointments can have many payments
+Appointments.id< Payment.appointment_id
+//1 appointment can lead to only one consultation
+Appointments.id-Consultations.appointment_id
+//1 consultation can lead to multiple types of test
+Consultations.id <Prescribed_tests.consultation_id
+//1 prescribed test generates one report
+Prescribed_tests.id - Reports.prescribed_test_id
+
