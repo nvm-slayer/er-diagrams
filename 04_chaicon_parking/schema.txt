@@ -1,0 +1,80 @@
+title ChaiCon Parking
+vehicles[icon:car, color: Blue] {
+  id int pk
+  vehicle_number string unique
+  vehicle_category_id int fk
+  created_at timestamp
+  modified_at timestamp
+}
+
+vehicle_categories[icon:grid, color: Purple] {
+  id int pk
+  name string
+  description string
+  size_type string
+  base_rate_per_hour float
+  is_ev boolean
+}
+
+parking_zones[icon:stop-circle, color: Orange] {
+  id int pk
+  name string
+  level int
+}
+
+parking_spot_categories[icon:grid, color: Yellow] {
+  id int pk
+  name string
+  description string
+  is_reserved boolean
+  allowed_vehicle_category_id int fk
+  has_charging boolean
+}
+
+parking_spots[icon:parking, color: Green] {
+  id int pk
+  spot_number string
+  zone_id int fk
+  category_id int fk
+  is_active boolean
+}
+
+parking_sessions[icon:timer, color: Yellow] {
+  id int pk
+  vehicle_id int fk
+  spot_id int fk
+  entry_time timestamp
+  exit_time timestamp
+  status string
+
+  created_at timestamp
+  modified_at timestamp
+}
+
+parking_tickets[icon:ticket, color: Purple] {
+  id int pk
+  session_id int fk
+  ticket_number string unique
+  issued_at timestamp
+  created_at timestamp
+}
+
+payments[icon:rupee, color: Red] {
+  id int pk
+  session_id int fk
+  amount float
+  payment_status string
+  payment_time timestamp
+
+  created_at timestamp
+  modified_at timestamp
+}
+
+vehicle_categories.id < vehicles.vehicle_category_id
+parking_zones.id < parking_spots.zone_id
+parking_spot_categories.id < parking_spots.category_id
+vehicles.id < parking_sessions.vehicle_id
+parking_spots.id < parking_sessions.spot_id
+parking_sessions.id < parking_tickets.session_id
+parking_sessions.id < payments.session_id
+
