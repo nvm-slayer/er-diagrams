@@ -1,0 +1,93 @@
+title ChaiLift
+
+buildings[icon:building, color: Green]{
+  id serial pk
+  name text
+  address text not null
+  pincode int
+  total_floors int
+  
+  created_at datetime
+  modified_at datetime
+}
+zone[icon:activity, color: Blue]{
+  id serial pk
+  building_id int fk
+  zone_type text
+
+  created_at datetime
+  modified_at datetime
+}
+floors[icon:layers, color: Red]{
+  id serial pk
+  zone_id int fk
+  floor_no int not null unique
+  is_operational boolean
+
+  created_at datetime
+  modified_at datetime
+}
+elevator_shafts[icon:gear, color: Purple]{
+  id serial pk
+  building_id int fk
+
+  created_at datetime
+  modified_at datetime
+}
+elevators[icon:arrow-up-down, color: Yellow]{
+  id serial pk
+  elevator_shaft_id int fk
+  capacity(in kgs) int 
+  current_floor int not null
+  status enum(idle, moving, maintenance)
+  last_inspection_date datetime
+
+  created_at datetime
+  modified_at datetime
+
+}
+requests[icon:timer, color: Green]{
+  id serial pk
+  source_floor_id int fk
+  destination_floor_id int fk
+  direction enum(up, down)
+  status enum(pending, assigned, completed)
+  created_at datetime
+}
+ride_assignment[icon:ticket, color: Orange]{
+  id serial pk
+  request_id int fk
+  elevator_id int 
+  assigned_at int
+
+}
+maintenances[icon:tool, color: Blue]{
+  id serial pk
+  elevator_id int fk
+  cost decimal
+  issue text
+  created_at datetime
+  maintenance_done_at datetime
+  next_maintenance datetime
+
+}
+
+//one buildings can have many zones
+buildings.id <zone.building_id
+//one zone can have many floors
+zone.id < floors.zone_id
+//one shaft has only one elevator as stated in the assignment
+elevator_shafts.id - elevators.elevator_shaft_id
+//1 request will lead to 1 ride assignemnt
+requests.id - ride_assignment.request_id
+//1 floor can have many request
+floors.id < requests.floor_id
+//1 lift can have maintenances done many times
+elevators.id < maintenances.elevator_id
+//1 elevator can serve many assignments
+elevators.id <ride_assignment.elevator_id
+//1 building can have many shafts
+buildings.id <elevator_shafts.building_id
+
+
+
